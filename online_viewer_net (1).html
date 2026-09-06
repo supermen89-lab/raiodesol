@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Boutique Mobile</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* VARIÁVEIS DE CORES DINÂMICAS */
+        :root {
+            /* Primavera / Verão */
+            --bg-color: #FAF7F5;
+            --card-bg: #FFFFFF;
+            --accent-soft: #F3E8E3;
+            --accent-rose: #E8D3C7;
+            --primary-text: #332C2A;
+            --secondary-text: #7A6E6B;
+            --btn-bg: #4A3E3D;
+            --btn-text: #FFFFFF;
+            --border-radius-lg: 20px;
+            --border-radius-md: 14px;
+            --border-radius-sm: 8px;
+            --shadow-soft: 0 8px 20px rgba(74, 62, 61, 0.06);
+        }
+
+        /* OUTONO */
+        body.theme-outono {
+            --bg-color: #F8F3EE;
+            --card-bg: #FFFFFF;
+            --accent-soft: #EFE3D8;
+            --accent-rose: #D9A07B;
+            --primary-text: #2C1A11;
+            --secondary-text: #785A48;
+            --btn-bg: #7C3A18;
+            --btn-text: #FFFFFF;
+        }
+
+        /* INVERNO / NATAL */
+        body.theme-inverno {
+            --bg-color: #F0F4F8;
+            --card-bg: #FFFFFF;
+            --accent-soft: #E2E8F0;
+            --accent-rose: #CBD5E1;
+            --primary-text: #0F172A;
+            --secondary-text: #475569;
+            --btn-bg: #1E293B;
+            --btn-text: #FFFFFF;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Montserrat', sans-serif;
+            border-radius: var(--border-radius-sm);
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--primary-text);
+            line-height: 1.5;
+            padding-bottom: 40px;
+            transition: background-color 0.4s ease, color 0.4s ease;
+            position: relative;
+            overflow-x: hidden;
+            max-width: 480px;
+            margin: 0 auto;
+        }
+
+        /* TIPOGRAFIA */
+        h1, h2, h3, .brand-logo {
+            font-family: 'Playfair Display', serif;
+            letter-spacing: 0.5px;
+        }
+
+        /* EFEITOS DE ESTAÇÃO */
+        #effectsContainer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            top: -20px;
+            color: #FFF;
+            user-select: none;
+            animation-name: fallAnimation;
+            animation-timing-function: linear;
+            animation-iteration-count: infinite;
+        }
+
+        body.theme-inverno .particle {
+            color: #A5F3FC;
+            text-shadow: 0 0 5px rgba(255,255,255,0.8);
+        }
+
+        @keyframes fallAnimation {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0.9; }
+            100% { transform: translateY(105vh) rotate(360deg); opacity: 0.2; }
+        }
+
+        /* CABEÇALHO TRANSPARENTE E CENTRALIZADO */
+        header {
+            background-color: transparent;
+            padding: 20px 15px 10px 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 1000;
+        }
+
+        .brand-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-circle {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            background-color: var(--accent-soft);
+            border: 3px solid var(--accent-rose);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.08);
+            flex-shrink: 0;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .logo-circle:active {
+            transform: scale(0.95);
+        }
+
+        .logo-circle img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        .brand-logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-text);
+            text-align: center;
+        }
+
+        .admin-status-badge {
+            display: none;
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background-color: var(--btn-bg);
+            color: var(--btn-text);
+            padding: 5px 10px;
+            font-size: 0.75rem;
+            border-radius: var(--border-radius-md);
+            cursor: pointer;
+            border: none;
+        }
+
+        /* CONTAINER PRINCIPAL */
+        .container {
+            padding: 0 12px;
+        }
+
+        .hero-banner {
+            background-color: var(--accent-soft);
+            border-radius: var(--border-radius-lg);
+            padding: 20px 12px;
+            text-align: center;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow-soft);
+            transition: background-color 0.4s ease;
+        }
+
+        .hero-banner h1 {
+            font-size: 1.5rem;
+            margin-bottom: 4px;
+            color: var(--primary-text);
+        }
+
+        .hero-banner p {
+            color: var(--secondary-text);
+            font-size: 0.85rem;
+        }
+
+        /* FILTROS COMPACTOS E DINÂMICOS (SEM SCROLL) */
+        .categories-filter {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 4px;
+            margin-bottom: 20px;
+            width: 100%;
+        }
+
+        .filter-btn {
+            background-color: var(--card-bg);
+            border: 1px solid var(--accent-rose);
+            color: var(--primary-text);
+            padding: 6px 0;
+            flex: 1;
+            text-align: center;
+            cursor: pointer;
+            border-radius: 18px;
+            font-size: 0.72rem; /* Fonte reduzida para caber perfeitamente */
+            font-weight: 500;
+            transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Animação suave */
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+            user-select: none;
+        }
+
+        /* Efeito ao Clicar / Ativo */
+        .filter-btn:active {
+            transform: scale(0.92);
+        }
+
+        .filter-btn.active {
+            background-color: var(--btn-bg);
+            color: var(--btn-text);
+            border-color: var(--btn-bg);
+            font-weight: 600;
+            transform: scale(1.03);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        /* GRELHA DE PRODUTOS */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 12px;
+        }
+
+        .product-card {
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius-lg);
+            padding: 10px;
+            box-shadow: var(--shadow-soft);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+        }
+
+        .product-image-container {
+            position: relative;
+            overflow: hidden;
+            border-radius: var(--border-radius-md);
+            cursor: pointer;
+        }
+
+        .product-image {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-radius: var(--border-radius-md);
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .zoom-badge {
+            position: absolute;
+            bottom: 12px;
+            right: 6px;
+            background-color: rgba(255, 255, 255, 0.9);
+            color: var(--primary-text);
+            padding: 2px 6px;
+            font-size: 0.65rem;
+            font-weight: 500;
+            border-radius: var(--border-radius-sm);
+            pointer-events: none;
+        }
+
+        .product-tag {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            background-color: rgba(255, 255, 255, 0.9);
+            color: var(--primary-text);
+            padding: 2px 6px;
+            font-size: 0.6rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            border-radius: var(--border-radius-sm);
+            z-index: 2;
+        }
+
+        .product-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+            line-height: 1.2;
+        }
+
+        .product-price {
+            font-weight: 500;
+            font-size: 0.8rem;
+            color: var(--secondary-text);
+            margin-bottom: 8px;
+        }
+
+        .delete-btn {
+            background-color: #E57373;
+            color: white;
+            border: none;
+            padding: 6px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 0.75rem;
+            font-weight: 500;
+            border-radius: var(--border-radius-md);
+            display: none;
+        }
+
+        /* MODAL DE ZOOM MOBILE */
+        .image-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(8px);
+            z-index: 3000;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+        }
+
+        .image-modal-content {
+            position: relative;
+            background-color: var(--card-bg);
+            padding: 15px;
+            border-radius: var(--border-radius-lg);
+            width: 100%;
+            max-height: 85vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .image-modal-wrapper {
+            overflow: hidden;
+            border-radius: var(--border-radius-md);
+            width: 100%;
+            max-height: 60vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: var(--bg-color);
+        }
+
+        .image-modal-img {
+            max-width: 100%;
+            max-height: 60vh;
+            object-fit: contain;
+        }
+
+        .image-modal-info {
+            width: 100%;
+            margin-top: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .image-modal-title {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .image-modal-price {
+            font-size: 0.95rem;
+            color: var(--secondary-text);
+            font-weight: 500;
+        }
+
+        .close-modal-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: var(--accent-soft);
+            color: var(--primary-text);
+            border: none;
+            font-size: 1rem;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+
+        /* PAINEL ADMINISTRADOR */
+        .admin-panel {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            backdrop-filter: blur(5px);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .admin-content {
+            background-color: var(--card-bg);
+            padding: 20px;
+            width: 92%;
+            border-radius: var(--border-radius-lg);
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+
+        .admin-content h2 {
+            margin-bottom: 12px;
+            font-size: 1.1rem;
+        }
+
+        .admin-section {
+            border-bottom: 1px solid var(--accent-soft);
+            padding-bottom: 12px;
+            margin-bottom: 12px;
+        }
+
+        .form-group {
+            margin-bottom: 12px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.75rem;
+            margin-bottom: 4px;
+            color: var(--secondary-text);
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--accent-rose);
+            background-color: var(--bg-color);
+            color: var(--primary-text);
+            outline: none;
+            border-radius: var(--border-radius-md);
+            font-size: 0.85rem;
+        }
+
+        .admin-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 15px;
+        }
+
+        .btn-submit {
+            background-color: var(--btn-bg);
+            color: var(--btn-text);
+            border: none;
+            padding: 10px;
+            flex: 1;
+            cursor: pointer;
+            border-radius: var(--border-radius-md);
+            font-size: 0.85rem;
+        }
+
+        .btn-close {
+            background-color: #DDD;
+            color: #333;
+            border: none;
+            padding: 10px;
+            flex: 1;
+            cursor: pointer;
+            border-radius: var(--border-radius-md);
+            font-size: 0.85rem;
+        }
+
+        .admin-mode-active .delete-btn {
+            display: block;
+        }
+
+        .admin-mode-active .admin-status-badge {
+            display: block;
+        }
+    </style>
+</head>
+<body class="theme-primavera">
+
+    <div id="effectsContainer"></div>
+
+    <header>
+        <div class="brand-container">
+            <div class="logo-circle" onclick="triggerHiddenAdmin()">
+                <img id="siteLogo" src="" alt="Logótipo" onerror="this.src='https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop'">
+            </div>
+            <div class="brand-logo">Maison Minimal</div>
+        </div>
+        
+        <button id="adminBadge" class="admin-status-badge" onclick="openAdminModal()">⚙️ Admin</button>
+    </header>
+
+    <div class="container">
+        <section class="hero-banner">
+            <h1 id="bannerTitle">Nova Coleção</h1>
+            <p id="bannerSubtitle">Descubra os novos essenciais: vestuário, bolsas, acessórios e linha para bebés.</p>
+        </section>
+
+        <div class="categories-filter">
+            <button class="filter-btn active" onclick="filterCategory('todos')">Todos</button>
+            <button class="filter-btn" onclick="filterCategory('Vestuário')">Vestuário</button>
+            <button class="filter-btn" onclick="filterCategory('Bolsas')">Bolsas</button>
+            <button class="filter-btn" onclick="filterCategory('Acessórios')">Acessórios</button>
+            <button class="filter-btn" onclick="filterCategory('Bebés')">Bebés</button>
+        </div>
+
+        <main class="products-grid" id="productsGrid"></main>
+    </div>
+
+    <div class="image-modal" id="imageZoomModal" onclick="closeZoomModal(event)">
+        <div class="image-modal-content" onclick="event.stopPropagation()">
+            <button class="close-modal-btn" onclick="closeZoomModal(event)">✕</button>
+            <div class="image-modal-wrapper">
+                <img id="zoomModalImg" class="image-modal-img" src="" alt="" onclick="toggleSubZoom(this)">
+            </div>
+            <div class="image-modal-info">
+                <div>
+                    <div id="zoomModalTitle" class="image-modal-title"></div>
+                </div>
+                <div id="zoomModalPrice" class="image-modal-price"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="admin-panel" id="adminModal">
+        <div class="admin-content">
+            
+            <div class="admin-section">
+                <h2>Tema & Efeitos Especiais</h2>
+                <div class="form-group">
+                    <label>Escolher Tema & Animação</label>
+                    <select id="seasonThemeSelect" onchange="applySeasonTheme(this.value)">
+                        <option value="primavera">Primavera / Verão (Clean sem Efeitos)</option>
+                        <option value="outono">Outono (Folhas a Flutuar)</option>
+                        <option value="inverno">Inverno / Natal (Flocos de Neve ❄️)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="admin-section">
+                <h2>Logótipo da Marca</h2>
+                <form id="logoForm" onsubmit="handleUpdateLogo(event)">
+                    <div class="form-group">
+                        <label>URL do Logótipo (Link da Imagem)</label>
+                        <input type="url" id="logoUrlInput" required placeholder="https://exemplo.com/meu-logo.jpg">
+                    </div>
+                    <button type="submit" class="btn-submit" style="margin-bottom: 8px;">Atualizar Logótipo</button>
+                </form>
+            </div>
+
+            <div>
+                <h2>Adicionar Novo Artigo</h2>
+                <form id="addProductForm" onsubmit="handleAddProduct(event)">
+                    <div class="form-group">
+                        <label>Nome do Artigo</label>
+                        <input type="text" id="pName" required placeholder="Ex: Mala em Couro Soft">
+                    </div>
+                    <div class="form-group">
+                        <label>Categoria</label>
+                        <select id="pCategory" required>
+                            <option value="Vestuário">Vestuário</option>
+                            <option value="Bolsas">Bolsas</option>
+                            <option value="Acessórios">Acessórios</option>
+                            <option value="Bebés">Bebés</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Preço (€)</label>
+                        <input type="number" step="0.01" id="pPrice" required placeholder="29.90">
+                    </div>
+                    <div class="form-group">
+                        <label>URL da Imagem do Artigo</label>
+                        <input type="url" id="pImgUrl" required placeholder="https://exemplo.com/imagem.jpg">
+                    </div>
+                    <div class="admin-actions">
+                        <button type="button" class="btn-close" onclick="closeAdminModal()">Fechar</button>
+                        <button type="submit" class="btn-submit">Publicar Artigo</button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        const defaultProducts = [
+            {
+                id: 1,
+                name: "Blusa em Algodão Orgânico",
+                category: "Vestuário",
+                price: "34.90",
+                img: "https://images.unsplash.com/photo-1564257631407-4deb1f99d992?w=1000&auto=format&fit=crop"
+            },
+            {
+                id: 2,
+                name: "Mala de Ombro Minimalist",
+                category: "Bolsas",
+                price: "45.00",
+                img: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=1000&auto=format&fit=crop"
+            },
+            {
+                id: 3,
+                name: "Colar Banhado a Ouro",
+                category: "Acessórios",
+                price: "18.50",
+                img: "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=1000&auto=format&fit=crop"
+            },
+            {
+                id: 4,
+                name: "Conjunto de Bebé Knit Warm",
+                category: "Bebés",
+                price: "27.00",
+                img: "https://images.unsplash.com/photo-1522771930-78848d9293e8?w=1000&auto=format&fit=crop"
+            }
+        ];
+
+        let products = JSON.parse(localStorage.getItem('my_store_products')) || defaultProducts;
+        let savedLogo = localStorage.getItem('my_store_logo') || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop';
+        let savedTheme = localStorage.getItem('my_store_theme') || 'primavera';
+        let isAdminActive = false;
+        let currentCategory = 'todos';
+
+        document.getElementById('siteLogo').src = savedLogo;
+        document.getElementById('logoUrlInput').value = savedLogo;
+
+        function saveProducts() {
+            localStorage.setItem('my_store_products', JSON.stringify(products));
+        }
+
+        /* GERADOR DE EFEITOS VISUAIS */
+        function generateParticles(symbol, count) {
+            const container = document.getElementById('effectsContainer');
+            container.innerHTML = '';
+
+            for (let i = 0; i < count; i++) {
+                const p = document.createElement('div');
+                p.className = 'particle';
+                p.innerText = symbol;
+                p.style.left = Math.random() * 100 + 'vw';
+                p.style.animationDuration = (Math.random() * 5 + 4) + 's';
+                p.style.animationDelay = (Math.random() * 5) + 's';
+                p.style.fontSize = (Math.random() * 10 + 10) + 'px';
+                p.style.opacity = Math.random() * 0.7 + 0.3;
+                container.appendChild(p);
+            }
+        }
+
+        /* APLICAÇÃO DE TEMAS E EFEITOS */
+        function applySeasonTheme(theme) {
+            document.body.className = '';
+            document.body.classList.add('theme-' + theme);
+            localStorage.setItem('my_store_theme', theme);
+
+            const bTitle = document.getElementById('bannerTitle');
+            const bSubtitle = document.getElementById('bannerSubtitle');
+
+            if (theme === 'inverno') {
+                bTitle.innerText = "Especial Coleção de Natal & Inverno";
+                bSubtitle.innerText = "Descubra os aconchegantes essenciais de inverno: malhas, casacos e presentes de Natal.";
+                generateParticles('❄', 25);
+            } else if (theme === 'outono') {
+                bTitle.innerText = "Coleção de Outono";
+                bSubtitle.innerText = "Tons terrosos e peças envolventes para acolher a nova estação.";
+                generateParticles('🍂', 15);
+            } else {
+                bTitle.innerText = "Nova Coleção de Primavera / Verão";
+                bSubtitle.innerText = "Descubra os novos essenciais: vestuário, bolsas, acessórios e linha para bebés.";
+                document.getElementById('effectsContainer').innerHTML = '';
+            }
+
+            document.getElementById('seasonThemeSelect').value = theme;
+        }
+
+        function handleUpdateLogo(e) {
+            e.preventDefault();
+            const newLogoUrl = document.getElementById('logoUrlInput').value;
+            localStorage.setItem('my_store_logo', newLogoUrl);
+            document.getElementById('siteLogo').src = newLogoUrl;
+            alert('Logótipo atualizado com sucesso!');
+        }
+
+        function renderProducts() {
+            const grid = document.getElementById('productsGrid');
+            grid.innerHTML = '';
+
+            const filtered = currentCategory === 'todos' 
+                ? products 
+                : products.filter(p => p.category === currentCategory);
+
+            filtered.forEach(p => {
+                const card = document.createElement('div');
+                card.className = 'product-card';
+                card.innerHTML = `
+                    <span class="product-tag">${p.category}</span>
+                    <div class="product-image-container" onclick="openZoomModal('${p.img}', '${p.name.replace(/'/g, "\\'")}', '${p.price}')">
+                        <img class="product-image" src="${p.img}" alt="${p.name}" onerror="this.src='https://via.placeholder.com/500?text=Imagem+Indisponivel'">
+                        <span class="zoom-badge">🔍 Ver</span>
+                    </div>
+                    <div class="product-title">${p.name}</div>
+                    <div class="product-price">${parseFloat(p.price).toFixed(2)} €</div>
+                    <button class="delete-btn" onclick="removeProduct(${p.id})">Remover</button>
+                `;
+                grid.appendChild(card);
+            });
+
+            if (isAdminActive) {
+                document.body.classList.add('admin-mode-active');
+            } else {
+                document.body.classList.remove('admin-mode-active');
+            }
+        }
+
+        /* ACESSO MODO ADMIN */
+        function triggerHiddenAdmin() {
+            if (!isAdminActive) {
+                const password = prompt("Modo Administrador - Introduza a palavra-passe:");
+                if (password === "admin123" || password === "") { 
+                    isAdminActive = true;
+                    renderProducts();
+                    openAdminModal();
+                } else {
+                    alert("Palavra-passe incorreta.");
+                }
+            } else {
+                openAdminModal();
+            }
+        }
+
+        function openAdminModal() {
+            document.getElementById('adminModal').style.display = 'flex';
+        }
+
+        function closeAdminModal() {
+            document.getElementById('adminModal').style.display = 'none';
+        }
+
+        /* ZOOM DA IMAGEM */
+        function openZoomModal(imgSrc, title, price) {
+            const modal = document.getElementById('imageZoomModal');
+            const modalImg = document.getElementById('zoomModalImg');
+            
+            modalImg.src = imgSrc;
+            document.getElementById('zoomModalTitle').innerText = title;
+            document.getElementById('zoomModalPrice').innerText = parseFloat(price).toFixed(2) + ' €';
+            
+            modal.style.display = 'flex';
+        }
+
+        function closeZoomModal(event) {
+            document.getElementById('imageZoomModal').style.display = 'none';
+        }
+
+        /* GESTÃO DE PRODUTOS */
+        function handleAddProduct(e) {
+            e.preventDefault();
+            const newProduct = {
+                id: Date.now(),
+                name: document.getElementById('pName').value,
+                category: document.getElementById('pCategory').value,
+                price: document.getElementById('pPrice').value,
+                img: document.getElementById('pImgUrl').value
+            };
+
+            products.push(newProduct);
+            saveProducts();
+            renderProducts();
+            closeAdminModal();
+            document.getElementById('addProductForm').reset();
+        }
+
+        function removeProduct(id) {
+            if (confirm("Tem a certeza de que deseja remover este artigo?")) {
+                products = products.filter(p => p.id !== id);
+                saveProducts();
+                renderProducts();
+            }
+        }
+
+        function filterCategory(category) {
+            currentCategory = category;
+            const buttons = document.querySelectorAll('.filter-btn');
+            buttons.forEach(btn => {
+                if (btn.innerText.toLowerCase() === category.toLowerCase() || (category === 'todos' && btn.innerText === 'Todos')) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+            renderProducts();
+        }
+
+        // Inicializar
+        applySeasonTheme(savedTheme);
+        renderProducts();
+    </script>
+</body>
+</html>
